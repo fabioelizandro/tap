@@ -24,7 +24,7 @@ Clone este repositório, se não for possível faça um fork para desenvolver um
 ```
 $ git clone git@github.com:fabioelizandro/tap.git
 ```
-Vá para a posta do projeto e manda instalar as dependências
+Vá para a pasta do projeto e manda instalar as dependências
 ```
 $ cd tap/
 $ npm install 
@@ -65,7 +65,7 @@ $ grunt serve:dist
 ## Deploy 
 O TAP utiliza deploy contínio, a cada integração com o master o servidor de integração faz o deploy automaticamente.
 
-O servidor de integração utilizado é [Travis]([https://travis-ci.org/fabioelizandro/tap]())
+O servidor de integração utilizado é [Travis](https://travis-ci.org/fabioelizandro/tap)
 
 ## A Fazer
 [https://github.com/fabioelizandro/tap/issues]()
