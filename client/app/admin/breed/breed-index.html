@@ -1,0 +1,54 @@
+<div class="row">
+  <div class="col-lg-12">
+    <ol class="breadcrumb">
+      <li><a ui-sref="admin.dashboard">Área de trabalho</a></li>
+      <li class="active">Raças</li>
+    </ol>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xs-12">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <a ui-sref="admin.breed.new" class="btn btn-xs pull-right btn-primary">
+          Nova Raça
+        </a>
+        <h3 class="panel-title">
+          <i class="fa fa-list fa-fw"></i>
+          Raças cadastradas
+        </h3>
+      </div>
+      <div class='container-grid'>
+        <table tr-ng-grid="" items="base.breeds" locale='pt-br' page-items="10" selection-mode='none'>
+          <thead>
+          <tr>
+            <th field-name="name" display-name="Nome" enable-filtering="true" enable-sorting="true">
+            </th>
+            <th field-name="type" display-name="Tipo" enable-filtering="true" enable-sorting="true" display-format="enum:'petType'">
+            </th>
+            <th class='grid-actions'>
+              <div>
+                Ações
+              </div>
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td class='grid-actions'>
+              <div class="btn-group btn-group-sm">
+                <a ui-sref="admin.breed.edit({id: gridItem._id})" tooltip="Editar" class="btn btn-primary" to-top>
+                  <i class='fa fa-edit'></i>
+                </a>
+                <button tooltip="Deletar" class="btn btn-danger" ng-click="base.destroy(gridItem, base.breeds)">
+                  <i class='fa' ng-class="{'fa-remove': !gridItem.$deleting, 'fa-spin fa-spinner': gridItem.$deleting}"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

@@ -24,8 +24,11 @@
       })
       .when('/admin/', function ($state) {
         $state.go('admin.dashboard');
-      })
-      .otherwise('/');
+      });
+
+    $urlRouterProvider.otherwise(function ($injector) {
+      $injector.get('$state').go('main.home');
+    });
 
     $locationProvider.html5Mode(true);
     $httpProvider.interceptors.push('authInterceptor');

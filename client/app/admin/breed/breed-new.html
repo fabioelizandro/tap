@@ -1,0 +1,42 @@
+<div class="row">
+  <div class="col-lg-12">
+    <ol class="breadcrumb">
+      <li><a ui-sref="admin.dashboard">Área de trabalho</a></li>
+      <li><a ui-sref="admin.breed.index">Raças</a></li>
+      <li class="active">Criar</li>
+    </ol>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xs-12">
+    <section class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">
+          <i class="fa fa-edit fa-fw"></i>
+          Criar
+        </h3>
+      </div>
+      <div class="panel-body">
+        <div class="row">
+          <div class="col-md-8 col-md-offset-2">
+            <form class="form-horizontal" name="form" ng-submit="vm.create(form, vm.breed, base.breeds)" novalidate>
+
+              <ng-include src="'app/admin/breed/breed-form.html'"></ng-include>
+
+              <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                  <button class="btn btn-primary" type="submit">
+                    {{(vm.breed.$saving)? 'Cadastrando...' : 'Cadastrar'}}
+                  </button>
+                  <a class="btn btn-default" ui-sref="admin.breed.index">
+                    Voltar para a listagem
+                  </a>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
