@@ -5,19 +5,17 @@ var app = require('../../app');
 var request = require('supertest');
 var Thing = require('./thing.model');
 var mongoose = require('mongoose');
-var DatabaseCleaner = require('database-cleaner');
-var databaseCleaner = new DatabaseCleaner('mongodb');
-var mongoose = require('mongoose');
 var Factory = require('./thing.factory');
+var databaseCleaner = require('./../../components/database-cleaner');
 
 describe('Thing Endpoints', function () {
 
   beforeEach(function (done) {
-    databaseCleaner.clean(mongoose.connections[0].db, done);
+    databaseCleaner(done);
   });
 
   after(function (done) {
-    databaseCleaner.clean(mongoose.connections[0].db, done);
+    databaseCleaner(done);
   });
 
   describe('GET /api/things', function () {

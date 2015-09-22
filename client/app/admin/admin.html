@@ -57,9 +57,9 @@
               ng-if="hasRole('org')">
             <a ui-sref="admin.pet"><i class="fa fa-fw fa-paw"></i> Pets</a>
           </li>
-          <li data-to-top ng-class="{active: menuIsActive('admin.breed')}"
+          <li data-to-top ng-class="{active: menuIsActive(['admin.breed.index', 'admin.breed.edit', 'admin.breed.new'])}"
               ng-if="hasRole('org')">
-            <a ui-sref="admin.breed"><i class="fa fa-fw fa-paw"></i> Raças</a>
+            <a ui-sref="admin.breed.index"><i class="fa fa-fw fa-paw"></i> Raças</a>
           </li>
           <li data-to-top ng-class="{active: menuIsActive(['admin.thing.index', 'admin.thing.edit', 'admin.thing.new'])}" ng-if="hasRole('root')">
             <a ui-sref="admin.thing.index"><i class="fa fa-fw fa-table"></i> Coisas</a>

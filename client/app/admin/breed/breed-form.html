@@ -1,0 +1,21 @@
+<div tap-form-group input="form.name" form="form">
+  <label for="name" class="col-xs-2">Nome</label>
+
+  <div class="col-xs-10">
+    <input focus-if="form.$pristine" type="text" id="name" name="name" class="form-control"
+           ng-model="vm.breed.name" required/>
+
+    <tap-form-error-messages input="form.name" form="form"></tap-form-error-messages>
+  </div>
+</div>
+<div tap-form-group input="form.type" form="form">
+  <label for="type" class="col-xs-2">Tipo</label>
+
+  <div class="col-xs-10">
+    <select id="type" name="type" class="form-control" ng-model="vm.breed.type" required
+            ng-options="type.id as type.label for type in base.typeEnum" required>
+    </select>
+
+    <tap-form-error-messages input="form.type" form="form"></tap-form-error-messages>
+  </div>
+</div>
