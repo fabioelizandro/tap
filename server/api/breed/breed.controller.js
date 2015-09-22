@@ -3,84 +3,98 @@
 var _ = require('lodash');
 var Breed = require('./breed.model');
 
-// Get list of breeds
-exports.index = function (req, res) {
-  var query = Breed.find();
-  query.where('deleted').equals(false);
-  if (req.query.type) {
-    query.where('type').equals(req.query.type);
-  }
-  query.exec(function (err, breeds) {
-    if (err) {
-      return handleError(res, err);
-    }
-    return res.status(200).json(breeds);
-  });
-};
+exports.index = index;
+exports.show = show;
+exports.create = create;
+exports.update = update;
+exports.destroy = destroy;
 
-// Get a single breed
-exports.show = function (req, res) {
-  Breed.findOne({_id: req.params.id, deleted: false}, function (err, breed) {
-    if (err) {
-      return handleError(res, err);
-    }
-    if (!breed) {
-      return res.status(404).send('Not Found');
-    }
-    return res.json(breed);
-  });
-};
+function index(req, res) {
+  Breed
+    .find()
+    .where(createIndexCriteria(req))
+    .sort('-createdAt')
+    .exec(mongoResult(res, function (breeds) {
+      return res.status(200).json(breeds);
+    }));
+}
 
-// Creates a new breed in the DB.
-exports.create = function (req, res) {
-  Breed.create(req.body, function (err, breed) {
-    if (err) {
-      return handleError(res, err);
-    }
+function createIndexCriteria(req) {
+  var queryCriteria = ['type'];
+
+  return _.merge(_.pick(req.query, queryCriteria), {
+    deleted: false
+  });
+}
+
+function show(req, res) {
+  Breed
+    .findOne()
+    .where({_id: req.params.id, deleted: false})
+    .exec(mongoResultWithNotFound(res, function (breed) {
+      return res.json(breed);
+    }));
+}
+
+function create(req, res) {
+  var breed = new Breed(req.body);
+
+  breed.save(mongoResult(res, function (breed) {
     return res.status(201).json(breed);
-  });
-};
+  }));
+}
 
-// Updates an existing breed in the DB.
-exports.update = function (req, res) {
-  if (req.body._id) {
-    delete req.body._id;
+function update(req, res) {
+  Breed
+    .findOne()
+    .where({_id: req.params.id, deleted: false})
+    .exec(mongoResultWithNotFound(res, function (breed) {
+      var updated = _.merge(breed, req.body, {_id: breed._id});
+
+      updated.save(mongoResult(res, function () {
+        return res.status(200).json(breed);
+      }));
+    }));
+}
+
+function destroy(req, res) {
+  Breed
+    .findById(req.params.id)
+    .exec(mongoResultWithNotFound(res, function (breed) {
+      breed.delete(mongoResult(res, function () {
+        return res.status(204).send('No Content');
+      }));
+    }));
+}
+
+function mongoResult(res, callback) {
+  return function (err, breeds) {
+    if (err) {
+      return handleError(res, err);
+    }
+
+    return callback(breeds);
   }
-  Breed.findById(req.params.id, function (err, breed) {
-    if (err) {
-      return handleError(res, err);
-    }
-    if (!breed) {
-      return res.status(404).send('Not Found');
-    }
-    var updated = _.merge(breed, req.body);
-    updated.save(function (err) {
-      if (err) {
-        return handleError(res, err);
-      }
-      return res.status(200).json(breed);
-    });
-  });
-};
+}
 
-// Deletes a breed from the DB.
-exports.destroy = function (req, res) {
-  Breed.findById(req.params.id, function (err, breed) {
+function mongoResultWithNotFound(res, callback) {
+  return function (err, breed) {
     if (err) {
       return handleError(res, err);
     }
+
     if (!breed) {
-      return res.status(404).send('Not Found');
+      return res.status(404).send('No Content');
     }
-    breed.delete(function (err) {
-      if (err) {
-        return handleError(res, err);
-      }
-      return res.status(204).send('No Content');
-    });
-  });
-};
+
+    return callback(breed);
+  }
+}
 
 function handleError(res, err) {
+  if (err.name === 'ValidationError' || err.name === 'CastError') {
+    return res.status(422).send(err);
+  }
+
   return res.status(500).send(err);
 }
