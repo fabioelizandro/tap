@@ -2,7 +2,8 @@ var async = require('async');
 var models = [
   require('./../../api/breed/breed.model'),
   require('./../../api/thing/thing.model'),
-  require('./../../api/user/user.model')
+  require('./../../api/user/user.model'),
+  require('./../../api/state/state.model')
 ];
 
 function databaseClear(done) {
