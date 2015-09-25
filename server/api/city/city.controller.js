@@ -2,97 +2,99 @@
 
 var _ = require('lodash');
 var City = require('./city.model');
-var User = require('./../user/user.model');
 
-// Get list of cities
-exports.index = function (req, res) {
-  var query = City.find();
-  if (req.query.state) {
-    query.where('state').equals(req.query.state);
-  }
-  if (req.query.published) {
-    query.where('published').equals((String(req.query.published) === 'true'));
-  }
-  query.where('deleted').equals(false);
-  query.exec(function (err, cities) {
-    if (err) {
-      return handleError(res, err);
-    }
-    return res.status(200).json(cities);
+exports.index = index;
+exports.show = show;
+exports.create = create;
+exports.update = update;
+exports.destroy = destroy;
+
+function index(req, res) {
+  City
+    .find()
+    .where(createIndexCriteria(req))
+    .sort('-createdAt')
+    .exec(mongoResult(res, function (cities) {
+      return res.status(200).json(cities);
+    }));
+}
+
+function createIndexCriteria(req) {
+  var queryCriteria = ['state', 'published'];
+
+  return _.merge(_.pick(req.query, queryCriteria), {
+    deleted: false
   });
-};
+}
 
-// Get a single city
-exports.show = function (req, res) {
-  City.findOne({_id: req.params.id, deleted: false}).lean().exec(function (err, city) {
-    if (err) {
-      return handleError(res, err);
-    }
-    if (!city) {
-      return res.status(404).send('Not Found');
-    }
-    User.find({city: city._id, role: 'candidate'}).count(function (err, count) {
-      if (err) {
-        return handleError(res, err);
-      }
-      city.counts = {
-        candidate: count
-      };
+function show(req, res) {
+  City
+    .findOne()
+    .where({_id: req.params.id, deleted: false})
+    .exec(mongoResultWithNotFound(res, function (city) {
       return res.json(city);
-    });
-  });
-};
+    }));
+}
 
-// Creates a new city in the DB.
-exports.create = function (req, res) {
-  City.create(req.body, function (err, city) {
-    if (err) {
-      return handleError(res, err);
-    }
+function create(req, res) {
+  var city = new City(req.body);
+
+  city.save(mongoResult(res, function (city) {
     return res.status(201).json(city);
-  });
-};
+  }));
+}
 
-// Updates an existing city in the DB.
-exports.update = function (req, res) {
-  if (req.body._id) {
-    delete req.body._id;
+function update(req, res) {
+  City
+    .findOne()
+    .where({_id: req.params.id, deleted: false})
+    .exec(mongoResultWithNotFound(res, function (city) {
+      var updated = _.merge(city, req.body, {_id: city._id});
+
+      updated.save(mongoResult(res, function () {
+        return res.status(200).json(city);
+      }));
+    }));
+}
+
+function destroy(req, res) {
+  City
+    .findById(req.params.id)
+    .exec(mongoResultWithNotFound(res, function (city) {
+      city.delete(mongoResult(res, function () {
+        return res.status(204).send('No Content');
+      }));
+    }));
+}
+
+function mongoResult(res, callback) {
+  return function (err, cities) {
+    if (err) {
+      return handleError(res, err);
+    }
+
+    return callback(cities);
   }
-  City.findById(req.params.id, function (err, city) {
-    if (err) {
-      return handleError(res, err);
-    }
-    if (!city) {
-      return res.status(404).send('Not Found');
-    }
-    var updated = _.merge(city, req.body);
-    updated.save(function (err) {
-      if (err) {
-        return handleError(res, err);
-      }
-      return res.status(200).json(city);
-    });
-  });
-};
+}
 
-// Deletes a city from the DB.
-exports.destroy = function (req, res) {
-  City.findById(req.params.id, function (err, city) {
+function mongoResultWithNotFound(res, callback) {
+  return function (err, city) {
     if (err) {
       return handleError(res, err);
     }
+
     if (!city) {
-      return res.status(404).send('Not Found');
+      return res.status(404).send('No Content');
     }
-    city.delete(function (err) {
-      if (err) {
-        return handleError(res, err);
-      }
-      return res.status(204).send('No Content');
-    });
-  });
-};
+
+    return callback(city);
+  }
+}
 
 function handleError(res, err) {
+  if (err.name === 'ValidationError' || err.name === 'CastError') {
+    return res.status(422).send(err);
+  }
+
   return res.status(500).send(err);
 }

@@ -6,24 +6,18 @@ var Schema = mongoose.Schema;
 var slug = require('slug');
 
 var CitySchema = new Schema({
-  name: {type: String, require: true},
+  name: {type: String, required: true},
   nameNormalized: {type: String, lowercase: true, trim: true, index: true},
   nameSlug: {type: String, lowercase: true, trim: true, unique: true},
   info: String,
   published: {type: Boolean, default: false},
-  state: {type: Schema.Types.ObjectId, ref: 'State', require: true, index: true}
+  state: {type: Schema.Types.ObjectId, ref: 'State', required: true, index: true}
 });
 
-/**
- * Plugins
- */
 CitySchema.plugin(require('mongoose-created-at'));
 CitySchema.plugin(require('mongoose-updated-at'));
 CitySchema.plugin(require('mongoose-delete'));
 
-/**
- * Pre-save hook
- */
 CitySchema
   .pre('save', true, function (next, done) {
     next();
