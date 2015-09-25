@@ -1,5 +1,5 @@
 # Todas as patas (TAP)
-[![Build Status](https://travis-ci.org/fabioelizandro/tap.svg)](https://travis-ci.org/fabioelizandro/tap)
+[![Build Status](https://travis-ci.org/fabioelizandro/tap.svg?branch=master)](https://travis-ci.org/fabioelizandro/tap)
 [![Dependency Status](https://david-dm.org/fabioelizandro/tap.svg)](https://david-dm.org/fabioelizandro/tap)
 [![devDependency Status](https://david-dm.org/fabioelizandro/tap/dev-status.svg)](https://david-dm.org/fabioelizandro/tap#info=devDependencies)
 [![Code Climate](https://codeclimate.com/github/fabioelizandro/tap/badges/gpa.svg)](https://codeclimate.com/github/fabioelizandro/tap)
