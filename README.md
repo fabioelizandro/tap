@@ -27,8 +27,8 @@ $ git clone git@github.com:fabioelizandro/tap.git
 Vá para a pasta do projeto e manda instalar as dependências
 ```
 $ cd tap/
-$ npm install 
-$ bower install 
+$ npm install
+$ bower install
 ```
 
 Pronto, agora você pode iniciar o servidor com o seguinte comando
@@ -45,7 +45,7 @@ Iniciar servidor para desenvolvimento:
 $ grunt serve
 ```
 
-Iniciar Karma 
+Iniciar Karma
 ```
 $ grunt test:client // Single Run e Coverage Report
 $ grunt karma:dev  // Watch files para o TDD
@@ -53,8 +53,8 @@ $ grunt karma:dev  // Watch files para o TDD
 
 Iniciar Mocha
 ```
-$ grunt test:client // Single run
-$ grunt mocha:dev   // Watch files para o TDD 
+$ grunt test:server // Single run
+$ grunt mocha:dev   // Watch files para o TDD
 ```
 
 Iniciar servidor de produção
@@ -62,7 +62,7 @@ Iniciar servidor de produção
 $ grunt serve:dist
 ```
 
-## Deploy 
+## Deploy
 O TAP utiliza deploy contínio, a cada integração com o master o servidor de integração faz o deploy automaticamente.
 
 O servidor de integração utilizado é [Travis](https://travis-ci.org/fabioelizandro/tap)
