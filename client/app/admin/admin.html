@@ -46,8 +46,8 @@
           <li data-to-top ng-class="{active: menuIsActive('admin.text')}" ng-if="hasRole('admin')">
             <a ui-sref="admin.text"><i class="fa fa-fw fa-font"></i> Textos</a>
           </li>
-          <li data-to-top ng-class="{active: menuIsActive(['admin.state', 'admin.city'])}" ng-if="hasRole('admin')">
-            <a ui-sref="admin.state"><i class="fa fa-fw fa-globe"></i> Locais</a>
+          <li data-to-top ng-class="{active: menuIsActive(['admin.state.index', 'admin.state.edit', 'admin.state.new', 'admin.city.index', 'admin.city.edit', 'admin.city.new'])}" ng-if="hasRole('admin')">
+            <a ui-sref="admin.state.index"><i class="fa fa-fw fa-globe"></i> Locais</a>
           </li>
           <li data-to-top ng-class="{active: menuIsActive(['admin.organization', 'admin.organization-user'])}"
               ng-if="hasRole('admin')">

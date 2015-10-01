@@ -16,7 +16,7 @@
       resourceManager
         .update(thing, things, form)
         .then(function () {
-          notifier.notify('Coisa cadastrada com sucesso!', 'success');
+          notifier.notify('Coisa atualizada com sucesso!', 'success');
           $state.go('admin.thing.index');
         })
         .catch(function (error) {

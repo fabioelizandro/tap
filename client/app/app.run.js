@@ -2,23 +2,10 @@
   'use strict';
 
   angular.module('tapApp')
-    .run(redirectToLastPageBeforeLogin)
     .run(configureNotify)
     .run(translateGrid)
     .run(secureStates)
     .run(SEOStates);
-
-  redirectToLastPageBeforeLogin.$inject = ['$window', '$cookieStore', '$location'];
-
-  function redirectToLastPageBeforeLogin($window, $cookieStore, $location) {
-    if ($cookieStore.get('state')) {
-      var url = $cookieStore.get('state');
-      $cookieStore.remove('state');
-      if ($location.url() !== url) {
-        $window.location.href = url;
-      }
-    }
-  }
 
   configureNotify.$inject = ['notify'];
 

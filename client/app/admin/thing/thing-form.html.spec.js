@@ -32,7 +32,7 @@ describe('Form: Thing', function () {
     });
 
     it('is required', function () {
-      expect(form.name.$validators.required).not.toBeUndefined();
+      expect(form.name.$validators.required).toBeDefined();
     });
   });
 
@@ -50,7 +50,7 @@ describe('Form: Thing', function () {
     });
 
     it('is required', function () {
-      expect(form.info.$validators.required).not.toBeUndefined();
+      expect(form.info.$validators.required).toBeDefined();
     });
   });
 });
