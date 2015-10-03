@@ -12,7 +12,7 @@ FactoryGirl.define('user', User, {
   name: 'Awesome User',
   type: config.pet.enums.type[0],
   password: '123456',
-  email: 'user@user.comm',
+  email: 'user@user.com',
   provider: 'local',
   role: 'user'
 });

@@ -18,7 +18,6 @@ module.exports = function(app) {
   app.use('/api/texts', require('./api/text'));
   app.use('/api/folders', require('./api/folder'));
   app.use('/api/files', require('./api/file'));
-  app.use('/api/things', require('./api/thing'));
   app.use('/api/users', require('./api/user'));
 
   app.use('/auth', require('./auth'));

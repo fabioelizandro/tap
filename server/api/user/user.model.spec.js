@@ -3,6 +3,7 @@
 var should = require('should');
 var app = require('../../app');
 var User = require('./user.model');
+var databaseCleaner = require('./../../components/database-cleaner');
 
 var user = new User({
   provider: 'local',
@@ -12,24 +13,9 @@ var user = new User({
 });
 
 describe('User Model', function() {
-  before(function(done) {
-    User.remove().exec().then(function() {
-      done();
-    });
-  });
 
-  afterEach(function(done) {
-    User.remove().exec().then(function() {
-      done();
-    });
-  });
-
-  it('begins with no users', function(done) {
-    User.find({}, function(err, users) {
-      users.should.have.length(0);
-      done();
-    });
-  });
+  beforeEach(databaseCleaner);
+  after(databaseCleaner);
 
   it('fails when saving a duplicate user', function(done) {
     user.save(function() {
