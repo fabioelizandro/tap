@@ -1,0 +1,29 @@
+<div tap-form-group input="form.name" form="form">
+  <label for="name" class="col-xs-2">Nome</label>
+
+  <div class="col-xs-10">
+    <input focus-if="form.$pristine" type="text" id="name" name="name" class="form-control"
+           ng-model="vm.state.name" required/>
+
+    <tap-form-error-messages input="form.name" form="form"></tap-form-error-messages>
+  </div>
+</div>
+<div tap-form-group input="form.acronym" form="form">
+  <label for="acronym" class="col-xs-2">Sigla</label>
+
+  <div class="col-xs-10">
+    <input type="text" name="acronym" id="acronym" class="form-control" ng-model="vm.state.acronym" required
+           maxlength='2'/>
+
+    <tap-form-error-messages input="form.acronym" form="form"></tap-form-error-messages>
+  </div>
+</div>
+<div class="form-group">
+  <div class="col-sm-offset-2 col-sm-10">
+    <div class="checkbox">
+      <label>
+        <input type="checkbox" ng-model="vm.state.published" name="published" id="published"> Publicado
+      </label>
+    </div>
+  </div>
+</div>

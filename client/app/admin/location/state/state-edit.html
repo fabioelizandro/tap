@@ -1,0 +1,45 @@
+<div class="row">
+  <div class="col-lg-12">
+    <ol class="breadcrumb">
+      <li><a ui-sref="admin.dashboard">Área de trabalho</a></li>
+      <li><a ui-sref="admin.state.index">Estado</a></li>
+      <li class="active">Editar</li>
+    </ol>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xs-12">
+    <section class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">
+          <i class="fa fa-edit fa-fw"></i>
+          Editar
+        </h3>
+      </div>
+      <div class="panel-body">
+        <div class="row">
+          <div class="col-md-8 col-md-offset-2">
+            <form class="form-horizontal" name="form" ng-submit="vm.update(form, vm.state, base.states)" novalidate>
+
+              <ng-include src="'app/admin/location/state/state-form.html'"></ng-include>
+
+              <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                  <button class="btn btn-primary" type="submit">
+                    {{(vm.state.$updating)? 'Atualizando...' : 'Atualizar'}}
+                  </button>
+                  <a class="btn btn-warning" ui-sref="admin.city.index({state: vm.state._id})">
+                    Cidades
+                  </a>
+                  <a class="btn btn-default" ui-sref="admin.state.index">
+                    Voltar para a listagem
+                  </a>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

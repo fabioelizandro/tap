@@ -7,7 +7,6 @@ var Diacritics = require('diacritic');
 var StateSchema = new Schema({
   name: {type: String, required: true},
   nameNormalized: {type: String, lowercase: true, trim: true, index: true},
-  info: String,
   published: {type: Boolean, default: false},
   acronym: {type: String, required: true, unique: true}
 });

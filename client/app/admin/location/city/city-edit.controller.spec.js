@@ -1,39 +1,39 @@
 'use strict';
 
-describe('Controller: ThingEditController', function () {
+describe('Controller: CityEditController', function () {
 
-  var Controller, Thing, notifier, $state, $rootScope, resourceManager, $q;
+  var Controller, City, notifier, $state, $rootScope, resourceManager, $q;
 
   beforeEach(module('tapApp'));
 
-  beforeEach(inject(function ($controller, _Thing_, _notifier_, _$state_, _$rootScope_, _resourceManager_, _$q_) {
+  beforeEach(inject(function ($controller, _City_, _notifier_, _$state_, _$rootScope_, _resourceManager_, _$q_) {
     $q = _$q_;
     $rootScope = _$rootScope_;
     resourceManager = _resourceManager_;
-    Thing = _Thing_;
+    City = _City_;
     notifier = _notifier_;
     $state = _$state_;
     $state.params = {id: 1};
 
-    spyOn(Thing, 'get').and.returnValue({_id: 1, name: 'Awesome Thing', info: 'test'});
+    spyOn(City, 'get').and.returnValue({_id: 1, name: 'Awesome City', info: 'test'});
 
-    Controller = $controller('ThingEditController', {$state: $state});
+    Controller = $controller('CityEditController', {$state: $state});
   }));
 
-  it('calls the thing resource with params', function () {
-    expect(Thing.get).toHaveBeenCalledWith({id: 1});
+  it('calls the city resource with params', function () {
+    expect(City.get).toHaveBeenCalledWith({id: 1});
   });
 
-  it('attaches a thing to the vm', function () {
-    expect(Controller.thing._id).toEqual(1);
+  it('attaches a city to the vm', function () {
+    expect(Controller.city._id).toEqual(1);
   });
 
   describe('#update', function () {
-    var things;
+    var cities;
 
     beforeEach(function () {
-      things = [{_id: 1, name: 'Awesome thing', info: 'test'},
-        {_id: 2, name: 'Another thing', info: 'test'}];
+      cities = [{_id: 1, name: 'Awesome city', info: 'test'},
+        {_id: 2, name: 'Another city', info: 'test'}];
 
       spyOn(notifier, 'notify');
     });
@@ -44,10 +44,10 @@ describe('Controller: ThingEditController', function () {
           resolve();
         });
       });
-      Controller.update({$valid: true, $invalid: false}, Controller.thing, things);
+      Controller.update({$valid: true, $invalid: false}, Controller.city, cities);
       $rootScope.$apply();
 
-      expect(resourceManager.update).toHaveBeenCalledWith(Controller.thing, things, {$valid: true, $invalid: false});
+      expect(resourceManager.update).toHaveBeenCalledWith(Controller.city, cities, {$valid: true, $invalid: false});
     });
 
     describe('when resource manager resolve the promise', function () {
@@ -61,17 +61,17 @@ describe('Controller: ThingEditController', function () {
       });
 
       it('notifies the success', function () {
-        Controller.update({$valid: true, $invalid: false}, Controller.thing, things);
+        Controller.update({$valid: true, $invalid: false}, Controller.city, cities);
         $rootScope.$apply();
 
-        expect(notifier.notify).toHaveBeenCalledWith('Coisa atualizada com sucesso!', 'success');
+        expect(notifier.notify).toHaveBeenCalledWith('Cidade atualizada com sucesso!', 'success');
       });
 
       it('goes to index page', function () {
-        Controller.update({$valid: true, $invalid: false}, Controller.thing, things);
+        Controller.update({$valid: true, $invalid: false}, Controller.city, cities);
         $rootScope.$apply();
 
-        expect($state.go).toHaveBeenCalledWith('admin.thing.index');
+        expect($state.go).toHaveBeenCalledWith('admin.city.index');
       });
     });
 
@@ -85,7 +85,7 @@ describe('Controller: ThingEditController', function () {
       });
 
       it('notifies the error', function () {
-        Controller.update({$valid: true, $invalid: false}, Controller.thing, things);
+        Controller.update({$valid: true, $invalid: false}, Controller.city, cities);
         $rootScope.$apply();
 
         expect(notifier.notify).toHaveBeenCalledWith('Algum erro ocorreu ao atualizar', 'error');
@@ -102,7 +102,7 @@ describe('Controller: ThingEditController', function () {
       });
 
       it('does not notify', function () {
-        Controller.update({$valid: true, $invalid: false}, Controller.thing, things);
+        Controller.update({$valid: true, $invalid: false}, Controller.city, cities);
         $rootScope.$apply();
 
         expect(notifier.notify).not.toHaveBeenCalled();
