@@ -9,7 +9,7 @@
   function BreedController(Breed, notifier, resourceManager, ENUM) {
     var vm = this;
 
-    vm.typeEnum = ENUM.get('petType');
+    vm.breedTypes = ENUM.get('petType');
     vm.breeds = Breed.query();
     vm.destroy = destroy;
 

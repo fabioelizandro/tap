@@ -12,8 +12,8 @@
   <label for="type" class="col-xs-2">Tipo</label>
 
   <div class="col-xs-10">
-    <select id="type" name="type" class="form-control" ng-model="vm.breed.type" required
-            ng-options="type.id as type.label for type in base.typeEnum" required>
+    <select id="type" name="type" class="form-control" ng-model="vm.breed.type"
+            ng-options="type.id as type.label for type in base.breedTypes" required>
     </select>
 
     <tap-form-error-messages input="form.type" form="form"></tap-form-error-messages>

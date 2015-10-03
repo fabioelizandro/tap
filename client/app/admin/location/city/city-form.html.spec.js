@@ -42,7 +42,7 @@ describe('Form: City', function () {
 
     it('is required', function () {
       nameElement.val('').trigger('input');
-      expect(nameElement.siblings('tap-form-error-messages').text()).toContain('Campo obrigatório');
+      expect(nameElement.parent().text()).toContain('Campo obrigatório');
     });
   });
 

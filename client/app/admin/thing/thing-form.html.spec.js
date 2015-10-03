@@ -2,25 +2,29 @@
 
 describe('Form: Thing', function () {
 
-  var form;
+  var form, $scope, formElement;
 
   beforeEach(module('tapApp'));
 
   beforeEach(inject(function ($rootScope, $compile) {
-    var $scope = $rootScope.$new();
-    var element = angular.element('<form name="form">' +
+    $scope = $rootScope.$new();
+    $scope.vm = {thing: {}};
+
+    formElement = angular.element('<form name="form">' +
       '<ng-include src="\'app/admin/thing/thing-form.html\'"></ng-include>' +
       '</form>');
 
-    $compile(element)($scope);
+    $compile(formElement)($scope);
     $scope.$apply();
 
     form = $scope.form;
   }));
 
   describe('name', function () {
-    it('is named name', function () {
-      expect(form.name.$name).toEqual('name');
+    var nameElement;
+
+    beforeEach(function () {
+      nameElement = formElement.find('#name');
     });
 
     it('has one sync validator', function () {
@@ -31,14 +35,22 @@ describe('Form: Thing', function () {
       expect(Object.keys(form.name.$asyncValidators).length).toEqual(0);
     });
 
+    it('has a model', function () {
+      nameElement.val('some name').trigger('input');
+      expect($scope.vm.thing.name).toEqual('some name');
+    });
+
     it('is required', function () {
-      expect(form.name.$validators.required).toBeDefined();
+      nameElement.val('').trigger('input');
+      expect(nameElement.parent().text()).toContain('Campo obrigatório');
     });
   });
 
   describe('info', function () {
-    it('is named info', function () {
-      expect(form.info.$name).toEqual('info');
+    var infoElement;
+
+    beforeEach(function () {
+      infoElement = formElement.find('#info');
     });
 
     it('has one sync validator', function () {
@@ -49,8 +61,14 @@ describe('Form: Thing', function () {
       expect(Object.keys(form.info.$asyncValidators).length).toEqual(0);
     });
 
+    it('has a model', function () {
+      infoElement.val('some info').trigger('input');
+      expect($scope.vm.thing.info).toEqual('some info');
+    });
+
     it('is required', function () {
-      expect(form.info.$validators.required).toBeDefined();
+      infoElement.val('').trigger('input');
+      expect(infoElement.parent().text()).toContain('Campo obrigatório');
     });
   });
 });
