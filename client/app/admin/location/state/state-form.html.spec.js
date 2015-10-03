@@ -42,7 +42,7 @@ describe('Form: State', function () {
 
     it('is required', function () {
       nameElement.val('').trigger('input');
-      expect(nameElement.siblings('tap-form-error-messages').text()).toContain('Campo obrigatório');
+      expect(nameElement.parent().text()).toContain('Campo obrigatório');
     });
   });
 
@@ -68,7 +68,7 @@ describe('Form: State', function () {
 
     it('is required', function () {
       acronymElement.val('').trigger('input');
-      expect(acronymElement.siblings('tap-form-error-messages').text()).toContain('Campo obrigatório');
+      expect(acronymElement.parent().text()).toContain('Campo obrigatório');
     });
 
     it('does not use values greater than 2', function () {
