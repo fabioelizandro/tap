@@ -43,31 +43,35 @@ UserSchema
     return this._password;
   });
 
-// Public profile information
 UserSchema
   .virtual('profile')
   .get(function () {
     return {
-      'name': this.name,
-      'role': this.role
+      name: this.name,
+      nameNormalized: this.nameNormalized,
+      email: this.email,
+      provider: this.provider,
+      picture: this.picture,
+      socialLink: this.socialLink,
+      organization: this.organization,
+      facebook: this.facebook,
+      google: this.google,
+      role: this.role
     };
   });
 
-// Non-sensitive info we'll be putting in the token
 UserSchema
   .virtual('token')
   .get(function () {
     return {
-      '_id': this._id,
-      'role': this.role
+      _id: this._id,
+      role: this.role
     };
   });
 
 /**
  * Validations
  */
-
-// Validate empty email
 UserSchema
   .path('email')
   .validate(function (email) {
@@ -75,7 +79,6 @@ UserSchema
     return email.length;
   }, 'E-mail não pode ficar em branco.');
 
-// Validate empty password
 UserSchema
   .path('hashedPassword')
   .validate(function (hashedPassword) {
@@ -83,7 +86,6 @@ UserSchema
     return hashedPassword.length;
   }, 'Senha não pode ficar em branco.');
 
-// Validate email is not taken
 UserSchema
   .path('email')
   .validate(function (value, respond) {

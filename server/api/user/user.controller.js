@@ -1,202 +1,131 @@
 'use strict';
 
-var User = require('./user.model');
-var config = require('../../config/environment');
-var jwt = require('jsonwebtoken');
 var _ = require('lodash');
+var User = require('./user.model');
 
-var validationError = function (res, err) {
-  return res.json(422, err);
-};
+exports.index = index;
+exports.show = show;
+exports.create = create;
+exports.update = update;
+exports.destroy = destroy;
+exports.me = me;
+exports.changePassword = changePassword;
 
-/**
- * Get list of users
- */
-exports.index = function (req, res) {
-  var query = User.find({deleted: false, role: 'user'}, '_id name picture');
-  if (req.query.place) {
-    query.where('place').equals(req.query.place);
-  }
-  query.exec(function (err, users) {
-    if (err)
-      return res.send(500, err);
-    res.json(200, users);
+function index(req, res) {
+  User
+    .find()
+    .select('-salt -hashedPassword')
+    .where(createIndexCriteria(req))
+    .sort('-createdAt')
+    .exec(mongoResult(res, function (users) {
+      return res.status(200).json(users);
+    }));
+}
+
+function createIndexCriteria(req) {
+  var queryCriteria = ['role'];
+
+  return _.merge(_.pick(req.query, queryCriteria), {
+    deleted: false
   });
-};
+}
 
-/**
- * Get list of users
- * restriction: 'admin'
- */
-exports.indexAdmin = function (req, res) {
-  var query = User.find({role: req.query.role || 'admin'}, '-salt -hashedPassword');
-  query.exec(function (err, users) {
-    if (err)
-      return res.send(500, err);
-    res.json(200, users);
-  });
-};
+function show(req, res) {
+  User
+    .findOne()
+    .where({_id: req.params.id, deleted: false})
+    .exec(mongoResultWithNotFound(res, function (user) {
+      return res.json(user.profile);
+    }));
+}
 
-/**
- * Creates a new user
- */
-exports.create = function (req, res) {
-  var newUser = new User(req.body);
-  newUser.provider = 'local';
-  newUser.role = 'user';
-  newUser.save(function (err, user) {
-    if (err)
-      return validationError(res, err);
-    var token = jwt.sign({_id: user._id}, config.secrets.session, {expiresInMinutes: 60 * 5});
-    res.json({token: token});
-  });
-};
+function create(req, res) {
+  var user = new User(req.body);
 
-/**
- * Create new user. Created by another admin
- */
-exports.createAdmin = function (req, res) {
-  var newUser = new User(req.body);
-  newUser.provider = 'local';
-  if (!newUser.role) {
-    newUser.role = 'admin';
-  }
-  newUser.save(function (err, user) {
-    if (err) {
-      return validationError(res, err);
-    }
-    return res.json(201, user);
-  });
-};
+  user.save(mongoResult(res, function (user) {
+    return res.status(201).json(user.profile);
+  }));
+}
 
-/**
- * Get a single user
- */
-exports.show = function (req, res, next) {
-  var userId = req.params.id;
+function update(req, res) {
+  User
+    .findOne()
+    .where({_id: req.params.id, deleted: false})
+    .exec(mongoResultWithNotFound(res, function (user) {
+      var updated = _.merge(user, req.body, {_id: user._id});
 
-  User.findOne({_id: userId, deleted: false}, function (err, user) {
-    if (err)
-      return next(err);
-    if (!user)
-      return res.send(401);
-    res.json(user.profile);
-  });
-};
+      updated.save(mongoResult(res, function () {
+        return res.status(200).json(user.profile);
+      }));
+    }));
+}
 
-/**
- * Get a single user for admin
- */
-exports.showAdmin = function (req, res, next) {
-  var userId = req.params.id;
+function destroy(req, res) {
+  User
+    .findOne()
+    .where({_id: req.params.id, deleted: false})
+    .exec(mongoResultWithNotFound(res, function (user) {
+      var updated = _.merge(user, {deleted: true});
 
-  User.findOne({_id: userId}, '-salt -hashedPassword', function (err, user) {
-    if (err)
-      return next(err);
-    if (!user)
-      return res.send(401);
-    res.json(user);
-  });
-};
+      updated.save(mongoResult(res, function () {
+        return res.status(204).json(user.profile);
+      }));
+    }));
+}
 
-/**
- * Deletes a user
- * restriction: 'admin'
- */
-exports.destroy = function (req, res) {
-  User.findById(req.params.id, function (err, user) {
-    if (err) {
-      return res.send(500, err);
-    }
-    if (user.email === req.user.email) {
-      return res.send(400);
-    }
-    if (user.email === config.admin.email) {
-      return res.send(403);
-    }
-    User.delete({_id: user._id}, function (err) {
-      if (err) {
-        return res.send(500, err);
+function me(req, res) {
+  User
+    .findOne()
+    .where({_id: req.user._id, deleted: false})
+    .exec(mongoResultWithNotFound(res, function (user) {
+      return res.json(user.profile);
+    }));
+}
+
+function changePassword(req, res) {
+  User
+    .findOne()
+    .where({_id: req.user._id, deleted: false})
+    .exec(mongoResultWithNotFound(res, function (user) {
+      if (!user.authenticate(req.body.currentPassword)) {
+        return res.status(403).send('Forbidden');
       }
-      return res.send(204);
-    });
-  });
-};
 
-// Updates an existing user in the DB.
-exports.updateAdmin = function (req, res) {
-  User.findById(req.params.id, function (err, user) {
+      user.password = req.body.newPassword;
+      user.save(mongoResult(res, function () {
+        return res.status(200).json(user.profile);
+      }));
+    }));
+}
+
+function mongoResult(res, callback) {
+  return function (err, users) {
     if (err) {
       return handleError(res, err);
     }
-    if (user.email === config.admin.email) {
-      return res.send(403);
-    }
-    if (!user) {
-      return res.send(404);
-    }
-    var updated = _.merge(user, {
-      email: req.body.email,
-      name: req.body.name
-    });
-    updated.save(function (err) {
-      if (err) {
-        return handleError(res, err);
-      }
-      return res.json(200, user);
-    });
-  });
-};
 
+    return callback(users);
+  }
+}
 
-/**
- * Change a users password
- */
-exports.changePassword = function (req, res, next) {
-  var userId = req.user._id;
-  var oldPass = String(req.body.oldPassword);
-  var newPass = String(req.body.newPassword);
-
-  User.findById(userId, function (err, user) {
-    if (user.authenticate(oldPass)) {
-      user.password = newPass;
-      user.save(function (err) {
-        if (err)
-          return validationError(res, err);
-        res.send(200);
-      });
-    } else {
-      res.send(403);
-    }
-  });
-};
-
-/**
- * Get my info
- */
-exports.me = function (req, res, next) {
-  var userId = req.user._id;
-  User.findOne({
-    _id: userId
-  }, '-salt -hashedPassword', function (err, user) { // don't ever give out the password or salt
+function mongoResultWithNotFound(res, callback) {
+  return function (err, user) {
     if (err) {
-      return next(err);
+      return handleError(res, err);
     }
+
     if (!user) {
-      return res.json(401);
+      return res.status(404).send('No Content');
     }
-    res.json(user);
-  });
-};
 
-/**
- * Authentication callback
- */
-exports.authCallback = function (req, res, next) {
-  res.redirect('/');
-};
-
+    return callback(user);
+  }
+}
 
 function handleError(res, err) {
-  return res.send(500, err);
+  if (err.name === 'ValidationError' || err.name === 'CastError') {
+    return res.status(422).send(err);
+  }
+
+  return res.status(500).send(err);
 }
