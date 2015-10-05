@@ -37,8 +37,8 @@
           <li data-to-top ng-class="{active: menuIsActive('admin.dashboard')}" ng-if="hasRole('org')">
             <a ui-sref="admin.dashboard"><i class="fa fa-fw fa-dashboard"></i> Área de Trabalho</a>
           </li>
-          <li data-to-top ng-class="{active: menuIsActive('admin.user')}" ng-if="hasRole('admin')">
-            <a ui-sref="admin.user"><i class="fa fa-fw fa-users"></i> Usuários</a>
+          <li data-to-top ng-class="{active: menuIsActive(['admin.user.index', 'admin.user.new', 'admin.user.edit'])}" ng-if="hasRole('admin')">
+            <a ui-sref="admin.user.index"><i class="fa fa-fw fa-users"></i> Usuários</a>
           </li>
           <li data-to-top ng-class="{active: menuIsActive('admin.media')}" ng-if="hasRole('admin')">
             <a ui-sref="admin.media"><i class="fa fa-fw fa-folder-open"></i> Mídias</a>

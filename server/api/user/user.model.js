@@ -5,6 +5,7 @@ var Schema = mongoose.Schema;
 var Diacritics = require('diacritic');
 var crypto = require('crypto');
 var authTypes = ['github', 'twitter', 'facebook', 'google'];
+var _ = require('lodash');
 
 var UserSchema = new Schema({
   name: {type: String, required: true},
@@ -50,13 +51,13 @@ UserSchema
       name: this.name,
       nameNormalized: this.nameNormalized,
       email: this.email,
+      role: this.role,
       provider: this.provider,
       picture: this.picture,
       socialLink: this.socialLink,
       organization: this.organization,
       facebook: this.facebook,
-      google: this.google,
-      role: this.role
+      google: this.google
     };
   });
 
