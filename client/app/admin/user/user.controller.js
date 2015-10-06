@@ -1,104 +1,29 @@
-'use strict';
+(function () {
+  'use strict';
 
-angular.module('tapApp')
-  .controller('UserCtrl', function ($scope, User, $stateParams, $location) {
-    $scope.users = User.queryAdmin({role: 'admin'});
-    $scope.user = {};
-    $scope.errors = {};
+  angular.module('tapApp')
+    .controller('UserController', UserController);
 
-    $scope.edit = function (user) {
-      $scope.ui.loading();
-      var userId = (_.isObject(user)) ? user._id : user;
-      $location.search('id', userId);
-      User.getAdmin({id: userId}, function (user) {
-        $scope.user = user;
-        $scope.ui.loaded();
-      }, function (err) {
-        $scope.ui.alert('Erro ao carregaro registro', 'danger');
-        $scope.ui.loaded();
-        console.log(err);
-      });
-    };
+  UserController.$inject = ['User', 'notifier', 'resourceManager', 'ENUM'];
 
-    $scope.clear = function (form) {
-      $scope.user = {};
-      $location.search('id', null);
-      form.$setPristine();
-    };
+  function UserController(User, notifier, resourceManager, ENUM) {
+    var vm = this;
 
-    $scope.save = function (form) {
-      if (form.$valid) {
-        $scope.preSave($scope.user, form);
-        $scope.submitted = true;
-        if ($scope.user._id) {
-          $scope.update($scope.user);
-          return;
-        }
-        $scope.create($scope.user, form);
-      }
-    };
+    vm.userTypes = ENUM.get('petType');
+    vm.users = User.query({role: 'admin'});
+    vm.destroy = destroy;
 
-    $scope.preSave = function (user) {
-      user.role = 'admin';
-    };
-
-    $scope.update = function (user) {
-      $scope.ui.loading();
-      user.$updateAdmin(function () {
-        $scope.submitted = false;
-        $scope.ui.loaded();
-        var index = _.findIndex($scope.users, {_id: user._id});
-        $scope.users.splice(index, 1, angular.copy(user));
-        $scope.ui.alert('Atualizado com sucesso!', 'success');
-      }, function (err) {
-        $scope.submitted = false;
-        $scope.ui.loaded();
-        $scope.ui.alert('Não foi possível atualizar o registro', 'danger');
-        console.log(err);
-      });
-    };
-
-    $scope.create = function (userNew, form) {
-      $scope.ui.loading();
-      User.saveAdmin(userNew, function (user) {
-        $scope.clear(form);
-        $scope.ui.alert('Adicionado com sucesso!', 'success');
-        $scope.submitted = false;
-        $scope.ui.loaded();
-        $scope.users.push(user);
-        $location.search('id', user._id);
-      }, function (err) {
-        $scope.submitted = false;
-        $scope.ui.loaded();
-        $scope.ui.alert('Não foi possível adicionar o registro!', 'danger');
-        err = err.data;
-        $scope.errors = {};
-
-        angular.forEach(err.errors, function (error, field) {
-          form[field].$setValidity('mongoose', false);
-          $scope.errors[field] = error.message;
-        });
-      });
-    };
-
-    $scope.delete = function (user, form) {
-      $scope.ui.confirm('Tem certeza que deseja deletar ?', function () {
-        user.$delete(function () {
-          $location.search('id', null);
-          var index = _.findIndex($scope.users, {_id: user._id});
-          $scope.users.splice(index, 1);
-          if ($scope.user._id === user._id) {
-            $scope.clear(form);
+    function destroy(user, users) {
+      resourceManager
+        .destroy(user, users)
+        .then(function () {
+          notifier.notify('Usuário deletado com sucesso', 'success');
+        })
+        .catch(function (error) {
+          if (error) {
+            notifier.notify('Não foi possível deletar o usuário, tente mais tarde.', 'danger');
           }
-          $scope.ui.alert('Deletado com sucesso!', 'success');
-        }, function (err) {
-          $scope.ui.alert('Não foi possível deletar o registro!', 'danger');
-          console.log(err);
         });
-      });
-    };
-
-    if ($stateParams.id) {
-      $scope.edit($stateParams.id);
     }
-  });
+  }
+})();

@@ -11,7 +11,7 @@ var databaseCleaner = require('./../../components/database-cleaner');
 var login = require('./../../components/spec-helpers/login');
 var httpStatus = require('./../../components/spec-helpers/http-status');
 
-describe.only('User Endpoints', function () {
+describe('User Endpoints', function () {
 
   beforeEach(databaseCleaner);
   after(databaseCleaner);

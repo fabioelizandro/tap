@@ -1,0 +1,30 @@
+<div tap-form-group input="form.name" form="form">
+  <label for="name" class="col-xs-2">Nome</label>
+
+  <div class="col-xs-10">
+    <input focus-if="form.$pristine" type="text" id="name" name="name" class="form-control"
+           ng-model="vm.user.name" required/>
+
+    <tap-form-error-messages input="form.name" form="form"></tap-form-error-messages>
+  </div>
+</div>
+<div tap-form-group input="form.email" form="form">
+  <label for="email" class="col-xs-2">E-mail</label>
+
+  <div class="col-xs-10">
+    <input type="email" id="email" name="email" class="form-control"
+           ng-model="vm.user.email" required/>
+
+    <tap-form-error-messages input="form.email" form="form"></tap-form-error-messages>
+  </div>
+</div>
+<div tap-form-group input="form.password" form="form" ng-if="!vm.user._id">
+  <label for="password" class="col-xs-2">Senha</label>
+
+  <div class="col-xs-10">
+    <input type="password" id="password" name="password" class="form-control"
+           ng-model="vm.user.password" required/>
+
+    <tap-form-error-messages input="form.password" form="form"></tap-form-error-messages>
+  </div>
+</div>

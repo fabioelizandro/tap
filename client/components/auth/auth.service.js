@@ -6,7 +6,7 @@ angular.module('tapApp')
     var roles = ['guest', 'user', 'org', 'admin', 'root'];
 
     if ($cookieStore.get('token')) {
-      currentUser = User.get();
+      currentUser = User.get({controller: 'me'});
     }
 
     return {
@@ -28,7 +28,7 @@ angular.module('tapApp')
         }).
           success(function (data) {
             $cookieStore.put('token', data.token);
-            currentUser = User.get();
+            currentUser = User.get({controller: 'me'});
             deferred.resolve(data);
             return cb();
           }).
@@ -64,7 +64,7 @@ angular.module('tapApp')
         return User.save(user,
           function (data) {
             $cookieStore.put('token', data.token);
-            currentUser = User.get();
+            currentUser = User.get({controller: 'me'});
             return cb(user);
           },
           function (err) {

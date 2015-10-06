@@ -1,39 +1,39 @@
 'use strict';
 
-describe('Controller: BreedEditController', function () {
+describe('Controller: UserEditController', function () {
 
-  var Controller, Breed, notifier, $state, $rootScope, resourceManager, $q;
+  var Controller, User, notifier, $state, $rootScope, resourceManager, $q;
 
   beforeEach(module('tapApp'));
 
-  beforeEach(inject(function ($controller, _Breed_, _notifier_, _$state_, _$rootScope_, _resourceManager_, _$q_) {
+  beforeEach(inject(function ($controller, _User_, _notifier_, _$state_, _$rootScope_, _resourceManager_, _$q_) {
     $q = _$q_;
     $rootScope = _$rootScope_;
     resourceManager = _resourceManager_;
-    Breed = _Breed_;
+    User = _User_;
     notifier = _notifier_;
     $state = _$state_;
     $state.params = {id: 1};
 
-    spyOn(Breed, 'get').and.returnValue({_id: 1, name: 'Awesome Breed', info: 'test'});
+    spyOn(User, 'get').and.returnValue({_id: 1, name: 'Awesome User', info: 'test'});
 
-    Controller = $controller('BreedEditController', {$state: $state});
+    Controller = $controller('UserEditController', {$state: $state});
   }));
 
-  it('calls the breed resource with params', function () {
-    expect(Breed.get).toHaveBeenCalledWith({id: 1});
+  it('calls the user resource with params', function () {
+    expect(User.get).toHaveBeenCalledWith({id: 1});
   });
 
-  it('attaches a breed to the vm', function () {
-    expect(Controller.breed._id).toEqual(1);
+  it('attaches a user to the vm', function () {
+    expect(Controller.user._id).toEqual(1);
   });
 
   describe('#update', function () {
-    var breeds;
+    var users;
 
     beforeEach(function () {
-      breeds = [{_id: 1, name: 'Awesome breed', info: 'test'},
-        {_id: 2, name: 'Another breed', info: 'test'}];
+      users = [{_id: 1, name: 'Awesome user', info: 'test'},
+        {_id: 2, name: 'Another user', info: 'test'}];
 
       spyOn(notifier, 'notify');
     });
@@ -44,10 +44,10 @@ describe('Controller: BreedEditController', function () {
           resolve();
         });
       });
-      Controller.update({$valid: true, $invalid: false}, Controller.breed, breeds);
+      Controller.update({$valid: true, $invalid: false}, Controller.user, users);
       $rootScope.$apply();
 
-      expect(resourceManager.update).toHaveBeenCalledWith(Controller.breed, breeds, {$valid: true, $invalid: false});
+      expect(resourceManager.update).toHaveBeenCalledWith(Controller.user, users, {$valid: true, $invalid: false});
     });
 
     describe('when resource manager resolve the promise', function () {
@@ -61,17 +61,17 @@ describe('Controller: BreedEditController', function () {
       });
 
       it('notifies the success', function () {
-        Controller.update({$valid: true, $invalid: false}, Controller.breed, breeds);
+        Controller.update({$valid: true, $invalid: false}, Controller.user, users);
         $rootScope.$apply();
 
-        expect(notifier.notify).toHaveBeenCalledWith('Raça atualizada com sucesso!', 'success');
+        expect(notifier.notify).toHaveBeenCalledWith('Usuário atualizado com sucesso!', 'success');
       });
 
       it('goes to index page', function () {
-        Controller.update({$valid: true, $invalid: false}, Controller.breed, breeds);
+        Controller.update({$valid: true, $invalid: false}, Controller.user, users);
         $rootScope.$apply();
 
-        expect($state.go).toHaveBeenCalledWith('admin.breed.index');
+        expect($state.go).toHaveBeenCalledWith('admin.user.index');
       });
     });
 
@@ -85,7 +85,7 @@ describe('Controller: BreedEditController', function () {
       });
 
       it('notifies the error', function () {
-        Controller.update({$valid: true, $invalid: false}, Controller.breed, breeds);
+        Controller.update({$valid: true, $invalid: false}, Controller.user, users);
         $rootScope.$apply();
 
         expect(notifier.notify).toHaveBeenCalledWith('Algum erro ocorreu ao atualizar', 'error');
@@ -102,7 +102,7 @@ describe('Controller: BreedEditController', function () {
       });
 
       it('does not notify', function () {
-        Controller.update({$valid: true, $invalid: false}, Controller.breed, breeds);
+        Controller.update({$valid: true, $invalid: false}, Controller.user, users);
         $rootScope.$apply();
 
         expect(notifier.notify).not.toHaveBeenCalled();

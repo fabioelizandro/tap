@@ -16,7 +16,7 @@
       resourceManager
         .update(breed, breeds, form)
         .then(function () {
-          notifier.notify('Raça cadastrada com sucesso!', 'success');
+          notifier.notify('Raça atualizada com sucesso!', 'success');
           $state.go('admin.breed.index');
         })
         .catch(function (error) {
