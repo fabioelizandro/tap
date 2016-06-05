@@ -29,6 +29,7 @@ var UserSchema = new Schema({
 UserSchema.plugin(require('mongoose-created-at'));
 UserSchema.plugin(require('mongoose-updated-at'));
 UserSchema.plugin(require('mongoose-delete'));
+UserSchema.plugin(require('mongoose-unique-validator'));
 
 /**
  * Virtuals
@@ -87,20 +88,6 @@ UserSchema
     return hashedPassword.length;
   }, 'Senha não pode ficar em branco.');
 
-UserSchema
-  .path('email')
-  .validate(function (value, respond) {
-    var self = this;
-    this.constructor.findOne({email: value}, function (err, user) {
-      if (err) throw err;
-      if (user) {
-        if (self.id === user.id) return respond(true);
-        return respond(false);
-      }
-      respond(true);
-    });
-  }, 'Este e-mail já está em uso.');
-
 var validatePresenceOf = function (value) {
   return value && value.length;
 };
@@ -157,7 +144,7 @@ UserSchema.methods = {
   encryptPassword: function (password) {
     if (!password || !this.salt) return '';
     var salt = new Buffer(this.salt, 'base64');
-    return crypto.pbkdf2Sync(password, salt, 10000, 64).toString('base64');
+    return crypto.pbkdf2Sync(password, salt, 10000, 64, 'sha512').toString('base64');
   }
 };
 

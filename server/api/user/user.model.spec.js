@@ -19,7 +19,13 @@ describe('User Model', function() {
 
   it('fails when saving a duplicate user', function(done) {
     user.save(function() {
-      var userDup = new User(user);
+      var userDup = new User({
+        provider: 'local',
+        name: 'Fake User',
+        email: 'test@test.com',
+        password: 'password'
+      });
+
       userDup.save(function(err) {
         should.exist(err);
         done();

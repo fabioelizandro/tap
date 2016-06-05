@@ -13,7 +13,7 @@ describe('Controller: BreedEditController', function () {
     Breed = _Breed_;
     notifier = _notifier_;
     $state = _$state_;
-    $state.params = {id: 1};
+    $state.params = {id: 1};  
 
     spyOn(Breed, 'get').and.returnValue({_id: 1, name: 'Awesome Breed', info: 'test'});
 

@@ -23,7 +23,7 @@ exports.indexByType = function (req, res) {
     texts.forEach(function (text) {
       textsByType[text.type] = text;
     });
-    return res.json(200, textsByType);
+    return res.status(200).json(textsByType);
   });
 };
 
