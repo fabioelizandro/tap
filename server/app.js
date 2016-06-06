@@ -26,12 +26,12 @@ if (config.dataFixtures) {
 // Setup server
 var app = express();
 var server = require('http').createServer(app);
-var socketServer = require('socket.io');
-var socketio = new socketServer(server, {
+var SocketServer = require('socket.io');
+var socketio = new SocketServer(server, {
   serveClient: true,
   path: '/socket.io-client'
 });
-var socketioAuth = new socketServer(server, {
+var socketioAuth = new SocketServer(server, {
   serveClient: true,
   path: '/socket.io-client-auth'
 });
