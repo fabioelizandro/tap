@@ -3,79 +3,89 @@
 var _ = require('lodash');
 var Organization = require('./organization.model');
 
-// Get list of organizations
-exports.index = function (req, res) {
-  Organization.find({deleted: false}, function (err, organizations) {
-    if (err) {
-      return handleError(res, err);
-    }
-    return res.status(200).json(organizations);
-  });
-};
+exports.index = index;
+exports.show = show;
+exports.create = create;
+exports.update = update;
+exports.destroy = destroy;
 
-// Get a single organization
-exports.show = function (req, res) {
-  Organization.findOne({_id: req.params.id, deleted: false}, function (err, organization) {
-    if (err) {
-      return handleError(res, err);
-    }
-    if (!organization) {
-      return res.status(404).send('Not Found');
-    }
-    return res.json(organization);
-  });
-};
+function index(req, res) {
+  Organization
+    .find()
+    .where({deleted: false})
+    .exec(mongoResult(res, function (organizations) {
+      return res.status(200).json(organizations);
+    }));
+}
 
-// Creates a new organization in the DB.
-exports.create = function (req, res) {
-  Organization.create(req.body, function (err, organization) {
-    if (err) {
-      return handleError(res, err);
-    }
+function show(req, res) {
+  Organization
+    .findOne()
+    .where({_id: req.params.id, deleted: false})
+    .exec(mongoResultWithNotFound(res, function (organization) {
+      return res.json(organization);
+    }));
+}
+
+function create(req, res) {
+  var organization = new Organization(req.body);
+
+  organization.save(mongoResult(res, function (organization) {
     return res.status(201).json(organization);
-  });
-};
+  }));
+}
 
-// Updates an existing organization in the DB.
-exports.update = function (req, res) {
-  if (req.body._id) {
-    delete req.body._id;
+function update(req, res) {
+  Organization
+    .findOne()
+    .where({_id: req.params.id, deleted: false})
+    .exec(mongoResultWithNotFound(res, function (organization) {
+      var updated = _.merge(organization, req.body, {_id: organization._id});
+
+      updated.save(mongoResult(res, function () {
+        return res.status(200).json(organization);
+      }));
+    }));
+}
+
+function destroy(req, res) {
+  Organization
+    .findById(req.params.id)
+    .exec(mongoResultWithNotFound(res, function (organization) {
+      organization.delete(mongoResult(res, function () {
+        return res.status(204).send('No Content');
+      }));
+    }));
+}
+
+function mongoResult(res, callback) {
+  return function (err, breeds) {
+    if (err) {
+      return handleError(res, err);
+    }
+
+    return callback(breeds);
   }
-  Organization.findOne({_id: req.params.id, deleted: false}, function (err, organization) {
-    if (err) {
-      return handleError(res, err);
-    }
-    if (!organization) {
-      return res.status(404).send('Not Found');
-    }
-    var updated = _.merge(organization, req.body);
-    updated.save(function (err) {
-      if (err) {
-        return handleError(res, err);
-      }
-      return res.status(200).json(organization);
-    });
-  });
-};
+}
 
-// Deletes a organization from the DB.
-exports.destroy = function (req, res) {
-  Organization.findById(req.params.id, function (err, organization) {
+function mongoResultWithNotFound(res, callback) {
+  return function (err, breed) {
     if (err) {
       return handleError(res, err);
     }
-    if (!organization) {
-      return res.status(404).send('Not Found');
+
+    if (!breed) {
+      return res.status(404).send('No Content');
     }
-    organization.delete(function (err) {
-      if (err) {
-        return handleError(res, err);
-      }
-      return res.status(204).send('No Content');
-    });
-  });
-};
+
+    return callback(breed);
+  }
+}
 
 function handleError(res, err) {
+  if (err.name === 'ValidationError' || err.name === 'CastError') {
+    return res.status(422).send(err);
+  }
+
   return res.status(500).send(err);
 }
